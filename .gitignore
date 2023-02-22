@@ -4,3 +4,5 @@
 # But not these files...
 !adminux.sh
 !.gitignore
+!LICENSE
+!README.md
