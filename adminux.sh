@@ -455,7 +455,7 @@ elif [[ "$option" == "2" || "$check_case" == "network uptime"  ]]; then
     validate_file "Enter a file containing IP addresses, each on a separate line" network_ip_file "Invalid IP address file"
 
     # Validate the log file
-    validate_file "Enter a filename to save IP addresses as a log entry" log_file "Invalid log file"
+    validate_file "Enter a filename to save IP addresses as a log entry (Create an empty file before running)" log_file "Invalid log file"
 
     # Calling the function to process and ping the IP addresses. The first argument is the file containing the IP addresses, and the second is the log file
     process_validate_ping_ip "$network_ip_file" "$log_file"
@@ -799,6 +799,7 @@ elif [[ "$option" == "4" || "$check_case" == "backup file"  ]]; then
     echo -e "\n[+] You have entered option 4"
     echo "[+] This can be used to create backup files within directories for the entire year"
     echo "[+] These files can be used to store data periodically"
+    echo "[+] A use case: You are asked to create a backup file for every day of every month so the backup data can be stored"
 
     default_daily_backup(){
 
@@ -825,7 +826,7 @@ elif [[ "$option" == "4" || "$check_case" == "backup file"  ]]; then
                 echo "------------------------------------------------"
 
                 if [[ $? -eq 0 ]]; then
-                    echo "Done. Your backup directory is $current_year"
+                    echo "Done. Your backup directory is $current_year (Try using 'tree $current_year' command for better view)"
                 else
                     echo "There was an issue creating the files"
                     exit 1
