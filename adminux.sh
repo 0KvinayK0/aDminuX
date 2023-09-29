@@ -3,7 +3,7 @@
 echo -e "		       ######                         #     # "
 echo -e "		  ##   #     # #    # # #    # #    #  #   #  "				
 echo -e "		 #  #  #     # ##  ## # ##   # #    #   # #   "
-echo -e "		#    # #     # # ## # # # #  # #    #    #    			A simple Linux administration automation tool!"
+echo -e "		#    # #     # # ## # # # #  # #    #    #    		A simple Linux administration automation tool!"
 echo -e "		###### #     # #    # # #  # # #    #   # #   "
 echo -e "		#    # #     # #    # # #   ## #    #  #   #  "
 echo -e "		#    # ######  #    # # #    #  ####  #     # "
