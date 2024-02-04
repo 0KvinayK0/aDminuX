@@ -94,7 +94,7 @@ if [[ "$option" == "1" || "$check_case" == "ip blocker"  ]]; then
     #echo "================================================================================="
     echo "[INFO] This allows you to drop packets from a single IP address, a range of IP addresses, or a file containing a list of IP addresses."
     #echo "================================================================================="
-    echo "[+} This will only drop packets from the system that is executing the script"
+    echo "[+] This will only drop packets from the system that is executing the script"
     #echo "================================================================================="
     echo "[NOTE] Dropping packets using iptables is not persistent. Changes will be lost if the system is restarted. This should only be used to drop packets at the time of running and not as a standalone parameter."
     #echo "================================================================================="
@@ -118,19 +118,19 @@ if [[ "$option" == "1" || "$check_case" == "ip blocker"  ]]; then
 
                 # The below message will only be displayed once
                 if [[ ! -v DISPLAYED ]]; then
-                    echo "The IP addresses were successfully added to the file"
+                    echo "[+] The IP addresses were successfully added to the file"
                     echo "================================================================================="
-                    echo "NOTE: The file format is in DDMMYYYY_SS, which is the current date and time. The SS will append the current seconds to prevent modification of existing files"
+                    echo "[NOTE] The file format is in DDMMYYYY_SS, which is the current date and time. The SS will append the current seconds to prevent modification of existing files"
                     echo "================================================================================="
                     declare -g DISPLAYED=1
                 fi
                 return 0
             else
-                echo "There was a problem when adding the IP addresses to $output"
+                echo "[-] There was a problem when adding the IP addresses to $output"
                 return 1
             fi
         else
-            echo "There was an issue parsing the IP address $1"
+            echo "[-] There was an issue parsing the IP address $1"
             return 1
         fi
     }
@@ -143,7 +143,7 @@ if [[ "$option" == "1" || "$check_case" == "ip blocker"  ]]; then
         read -p "> Do you want to add the blocked IP address to a file? [y/n]: " -r add_file
 
         while [[ "$add_file" != "y" && "$add_file" != "n" ]]; do
-            echo "Not quite. Try again?"
+            echo "[-] Not quite. Try again?"
             read -p "> Do you want to add the blocked IP address to a file? [y/n]: " -r add_file
 
         done
@@ -155,7 +155,7 @@ if [[ "$option" == "1" || "$check_case" == "ip blocker"  ]]; then
             if [[ $? -eq 0 ]]; then
                 return 0
             else
-                echo "It appears there was an error"
+                echo "[-] It appears there was an error"
                 return 1
             fi
 
@@ -174,7 +174,7 @@ if [[ "$option" == "1" || "$check_case" == "ip blocker"  ]]; then
         read -p "> Do you want to add the blocked IP addresses to a file? [y/n]: " -r add_file
 
         while [[ "$add_file" != "y" && "$add_file" != "n" ]]; do
-            echo "Not quite. Try again?"
+            echo "[-] Not quite. Try again?"
             read -p "> Do you want to add the blocked IP addresses to a file? [y/n]: " -r add_file
 
         done
@@ -215,23 +215,23 @@ if [[ "$option" == "1" || "$check_case" == "ip blocker"  ]]; then
 
         # Checking to see if the function executed successfully
         if [[ $? -eq 0 ]]; then
-            echo "Dropping packets from $single_ip..."
+            echo "[+] Dropping packets from $single_ip..."
 
             drop_packets "$single_ip"
 
             if [[ $? -eq 0 ]]; then
-                echo "Packets from $single_ip were dropped successfully"
+                echo "[+] Packets from $single_ip were dropped successfully"
 
                 ask_add_file "$single_ip"
 
             else
-                echo "There was a problem while dropping packets from $single_ip"
+                echo "[-] There was a problem while dropping packets from $single_ip"
                 return 1
 
             fi
 
         else
-            echo "Not an valid IP address"
+            echo "[-] Not an valid IP address"
             return 1
         fi
     }
@@ -249,20 +249,20 @@ if [[ "$option" == "1" || "$check_case" == "ip blocker"  ]]; then
 
             if [[ $? -eq 0 ]]; then
                 if [[ "${#multiple_ip[@]}" -eq "1" ]]; then
-                    echo "You can use 'Block single IP address', it is used to block a single IP"
+                    echo "[-] You can use 'Block single IP address', it is used to block a single IP"
 
                 elif [[ "${#multiple_ip[@]}" -ge "10" ]]; then
-                    echo "It will be very efficient if you can use the 'Block IP addresses from a file' option"
+                    echo "[-] It will be very efficient if you can use the 'Block IP addresses from a file' option"
 
                 else
                     for ip in "${multiple_ip[@]}"; do
                         drop_packets "$ip"
 
                         if [[ $? -ne 0 ]]; then
-                            echo "There was a problem dropping packets for IP address $ip"
+                            echo "[-] There was a problem dropping packets for IP address $ip"
                             return 1
                         else
-                            echo "Dropped packets from IP address $ip successfully"
+                            echo "[+] Dropped packets from IP address $ip successfully"
                         fi
                     done
 
@@ -271,7 +271,7 @@ if [[ "$option" == "1" || "$check_case" == "ip blocker"  ]]; then
                 fi
 
             else
-                echo "Your input contains an invalid IP address"
+                echo "[-] Your input contains an invalid IP address"
                 return 1
             fi
             break
@@ -295,7 +295,7 @@ if [[ "$option" == "1" || "$check_case" == "ip blocker"  ]]; then
 
 
             elif [[ ! -f "$file_ip" ]]; then
-                echo "Invalid file name: $file_ip"
+                echo "[-] Invalid file name: $file_ip"
                 read -p "> Please enter the file containing the list of IP addresses: " -r file_ip
 
             elif [[ -n "$file_ip" ]]; then
@@ -322,10 +322,10 @@ if [[ "$option" == "1" || "$check_case" == "ip blocker"  ]]; then
 
                     if [[ $? -ne 0 ]]; then
 
-                        echo "There was a problem dropping packets for IP address $ip"
+                        echo "[-] There was a problem dropping packets for IP address $ip"
                         return 1
                     else
-                        echo "Dropped packets from IP address $ip successfully"
+                        echo "[+] Dropped packets from IP address $ip successfully"
 
                     fi
                 done
@@ -334,11 +334,11 @@ if [[ "$option" == "1" || "$check_case" == "ip blocker"  ]]; then
                 return 0
 
             else
-                echo "The file \"$file_ip\" contains an invalid IP address"
+                echo "[-] The file \"$file_ip\" contains an invalid IP address"
                 return 1
             fi
         else
-            echo "$file_ip is not an valid file"
+            echo "[-] $file_ip is not an valid file"
 
         fi
 
@@ -412,21 +412,21 @@ elif [[ "$option" == "2" || "$check_case" == "network uptime"  ]]; then
 
                 # Validating the output of ping command
                 if [[ "$output" == *"100% packet loss"* ]]; then
-                    echo "The IP address $ip given is not connected to the internet" >> "$2"
+                    echo "[-] The IP address $ip given is not connected to the internet" >> "$2"
 
                 else
-                    echo "The IP address $ip is connected to the internet" >> "$2"
+                    echo "[+] The IP address $ip is connected to the internet" >> "$2"
                 fi
             done
 
             echo "----------------------------------------------------------------------------" >> "$2"
 
         else
-            echo "The file \"$1\" contains an invalid IP address"
+            echo "[-] The file \"$1\" contains an invalid IP address"
             exit 1
         fi
 
-        echo "The IP addresses have been successfully added to the file: $log_file"
+        echo "[+] The IP addresses have been successfully added to the file: $log_file"
         return 0
 
     }
@@ -452,10 +452,10 @@ elif [[ "$option" == "2" || "$check_case" == "network uptime"  ]]; then
     }
 
     # Validate the IP addresses file
-    validate_file "Enter a file containing IP addresses, each on a separate line" network_ip_file "Invalid IP address file"
+    validate_file "> Enter a file containing IP addresses, each on a separate line" network_ip_file "Invalid IP address file"
 
     # Validate the log file
-    validate_file "Enter a filename to save IP addresses as a log entry (Create an empty file before running)" log_file "Invalid log file"
+    validate_file "> Enter a filename to save IP addresses as a log entry (Create an empty file before running)" log_file "Invalid log file"
 
     # Calling the function to process and ping the IP addresses. The first argument is the file containing the IP addresses, and the second is the log file
     process_validate_ping_ip "$network_ip_file" "$log_file"
@@ -478,10 +478,10 @@ elif [[ "$option" == "3" || "$check_case" == "manage users"  ]]; then
                 echo "Wow, the boldness of your silence is simply breathtaking! Although, I must admit, I do need just a bit more from you. Could you please add a response to this thrilling input adventure?"
                 read -p "> Enter the username to add: " -r username
             elif ! [[ "$username" =~ ^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$ ]]; then
-                echo "Username can only contain alphanumeric characters and dashes"
+                echo "[-] Username can only contain alphanumeric characters and dashes"
                 read -p "> Enter the username to add: " -r username
             elif [[ $(echo -n "$username" | wc -c) -gt 32 ]]; then
-                echo "Username must not exceed 32 characters"
+                echo "[-] Username must not exceed 32 characters"
                 read -p "> Enter the username to add: " -r username
             else
                 break
@@ -497,18 +497,18 @@ elif [[ "$option" == "3" || "$check_case" == "manage users"  ]]; then
             sudo useradd -m -s /bin/bash "$username"
 
             if [[ $? -ne 0 ]]; then
-                echo "There was an issue adding the user"
+                echo "[-] There was an issue adding the user"
                 exit 1
             else
                 echo "------------------------------------------------"
-                echo "Created $username home directory"
-                echo "Assigned the shell"
-                echo "The user $username has been added succesfully"
+                echo "[+] Created $username home directory"
+                echo "[+] Assigned the shell"
+                echo "[+] The user $username has been added succesfully"
                 echo "------------------------------------------------"
                 exit 0
             fi
         else
-            echo "The user is already present"
+            echo "[-] The user is already present"
             grep -w "$username" /etc/passwd
             exit 1
         fi
@@ -534,7 +534,7 @@ elif [[ "$option" == "3" || "$check_case" == "manage users"  ]]; then
 
 
             elif [[ ! -f "$user_group" ]]; then
-                echo "Invalid file name: $user_group"
+                echo "[-] Invalid file name: $user_group"
                 read -p "> Enter the file that contains the user group combinations, separated by spaces: " -r user_group
 
             elif [[ -n "$user_group" ]]; then
@@ -567,13 +567,13 @@ elif [[ "$option" == "3" || "$check_case" == "manage users"  ]]; then
 
                     # Validating if each user and group contains correct strings
                     if ! [[ "$user" =~ ^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$ ]] || ! [[ "$group" =~ ^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$ ]]; then
-                        echo "Username or group can only contain alphanumeric characters and dashes. Please run the script again with the correct information"
+                        echo "[-] Username or group can only contain alphanumeric characters and dashes. Please run the script again with the correct information"
                         declare -g DISPLAYED=1
                     elif [[ $(echo -n "$user" | wc -c) -gt 32 ]]; then
-                        echo "Username must not exceed 32 characters"
+                        echo "[-] Username must not exceed 32 characters"
                         break
                     elif [[ $(echo -n "$group" | wc -c) -gt 32 ]]; then
-                        echo "Group length must not exceed 32 characters"
+                        echo "[-] Group length must not exceed 32 characters"
                         break
 
                     else
@@ -586,13 +586,13 @@ elif [[ "$option" == "3" || "$check_case" == "manage users"  ]]; then
                             groupadd "$group"
 
                             if [[ $? -eq 0 ]]; then
-                                echo "The $group group was added successfully"
+                                echo "[+] The $group group was added successfully"
                             else
-                                echo "There was an error adding the group"
+                                echo "[-] There was an error adding the group"
                                 exit 1
                             fi
                         else
-                            echo "The group $group already exists"
+                            echo "[-] The group $group already exists"
                             exit 1
                         fi
 
@@ -608,13 +608,13 @@ elif [[ "$option" == "3" || "$check_case" == "manage users"  ]]; then
                             usermod -a -G $group $user
 
                             if [[ $? -eq 0 ]]; then
-                                echo "User $user was added successfully"
+                                echo "[+] User $user was added successfully"
                             else
-                                echo "There was an error adding the user"
+                                echo "[-] There was an error adding the user"
                                 exit 1
                             fi
                         else
-                            echo "The user $user already exists"
+                            echo "[-] The user $user already exists"
                             exit 1
                         fi
                     fi
@@ -635,10 +635,10 @@ elif [[ "$option" == "3" || "$check_case" == "manage users"  ]]; then
                 echo "You know what they say, 'Silence is golden.' But in this case, it's just a bit uncooperative. Could you please add a response to this thrilling input adventure?"
                 read -p "> Enter the username to delete: " user_del
             elif ! [[ "$user_del" =~ ^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$ ]]; then
-                echo "Username can only contain alphanumeric characters and dashes"
+                echo "[-] Username can only contain alphanumeric characters and dashes"
                 read -p "> Enter the username to delete: " user_del
             elif [[ $(echo -n "$user_del" | wc -c) -gt 32 ]]; then
-                echo "Username must not exceed 32 characters"
+                echo "[-] Username must not exceed 32 characters"
                 read -p "> Enter the username to delete: " -r user_del
             else
                 break
@@ -654,16 +654,16 @@ elif [[ "$option" == "3" || "$check_case" == "manage users"  ]]; then
             sudo userdel -r "$user_del" 2> /dev/null
 
             if [[ $? -ne 0 ]]; then
-                echo "There was an issue deleting the user"
+                echo "[-] There was an issue deleting the user"
                 exit 1
             else
                 echo "------------------------------------------------"
-                echo "The user $user_del has been deleted successfully"
+                echo "[+] The user $user_del has been deleted successfully"
                 echo "------------------------------------------------"
                 exit 0
             fi
         else
-            echo "The user $user_del does not exist"
+            echo "[-] The user $user_del does not exist"
             exit 1
         fi
     }
@@ -680,10 +680,10 @@ elif [[ "$option" == "3" || "$check_case" == "manage users"  ]]; then
                 read -p "> Enter the username to delete: " -r get_user
 
             elif ! [[ "$get_user" =~ ^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*$ ]]; then
-                echo "Username can only contain alphanumeric characters and dashes"
+                echo "[-] Username can only contain alphanumeric characters and dashes"
                 read -p "> Enter the username to delete: " -r get_user
             elif [[ $(echo -n "$get_user" | wc -c) -gt 32 ]]; then
-                echo "Username must not exceed 32 characters"
+                echo "[-] Username must not exceed 32 characters"
                 read -p "> Enter the username to delete: " -r get_user
             else
                 break
@@ -695,7 +695,7 @@ elif [[ "$option" == "3" || "$check_case" == "manage users"  ]]; then
 
         if [[ -z $user_exist ]]; then
 
-            echo "The user $get_user does not exist"
+            echo "[-] The user $get_user does not exist"
             exit 1
 
         else
@@ -710,10 +710,10 @@ elif [[ "$option" == "3" || "$check_case" == "manage users"  ]]; then
             sudo userdel -r "$get_user" 2> /dev/null
 
             if [[ $? -eq 0 ]]; then
-                echo "The user $get_user was deleted successfully"
+                echo "[+] The user $get_user was deleted successfully"
 
             else
-                echo "There was an error deleting the user"
+                echo "[-] There was an error deleting the user"
                 exit 1
 
             fi
@@ -723,16 +723,16 @@ elif [[ "$option" == "3" || "$check_case" == "manage users"  ]]; then
                 sudo groupdel $user_group 2> /dev/null
 
                 if [[ $? -eq 0 ]]; then
-                    echo "The group $user_group was deleted successfully"
+                    echo "[+] The group $user_group was deleted successfully"
 
                 else
-                    echo "There was an error deleting the group"
+                    echo "[-] There was an error deleting the group"
                     exit 1
 
                 fi
 
             else
-                echo "The group $user_group is still in use by other users"
+                echo "[-] The group $user_group is still in use by other users"
 
             fi
         fi
@@ -741,13 +741,13 @@ elif [[ "$option" == "3" || "$check_case" == "manage users"  ]]; then
 
     logged_user(){
 
-        echo "Finding the number of users logged in and their name in the current system..."
+        echo "[+] Finding the number of users logged in and their name in the current system..."
 
         logged_in=$(who | awk '{print $1}' | uniq)
         count_logged_in=$(who | wc -l)
 
         echo "================================================================================="
-        echo "Number of logged in users: $count_logged_in"
+        echo "[+] Number of logged in users: $count_logged_in"
         echo -e "\nName"
         echo "------------------------------------------------"
         echo "$logged_in" | tr ' ' '\n'
@@ -803,9 +803,9 @@ elif [[ "$option" == "4" || "$check_case" == "backup file"  ]]; then
 
     default_daily_backup(){
 
-        echo -e "\nCreating backup files (\"log.daily\") each day for every month of the year..."
+        echo -e "\n[+] Creating backup files (\"log.daily\") each day for every month of the year..."
         echo "------------------------------------------------"
-        echo "Creating current year directory and switching to it.."
+        echo "[+] Creating current year directory and switching to it.."
         sleep 1
 
         current_year=$(date +%Y)
@@ -813,33 +813,33 @@ elif [[ "$option" == "4" || "$check_case" == "backup file"  ]]; then
         echo "------------------------------------------------"
 
         if [[ $? -eq 0 ]]; then
-            echo "Using brace expansion to create directories for each day of every month..."
+            echo "[+] Using brace expansion to create directories for each day of every month..."
             sleep 1
 
             sudo mkdir -p {January/{01..31},February/{01..28},March/{01..31},April/{01..30},May/{01..31},June/{01..30},July/{01..31},August/{01..31},September/{01..30},October/{01..31},November/{01..30},December/{01..31}}
             echo "------------------------------------------------"
 
             if [[ $? -eq 0 ]]; then
-                echo "Using brace expansion to create backup files for each day of every month..."
+                echo "[+] Using brace expansion to create backup files for each day of every month..."
                 sleep 1
                 touch {January/{01..31}/log.daily,February/{01..28}/log.daily,March/{01..31}/log.daily,April/{01..30},May/{01..31}/log.daily,June/{01..30}/log.daily,July/{01..31}/log.daily,August/{01..31}/log.daily,September/{01..30}/log.daily,October/{01..31}/log.daily,November/{01..30}/log.daily,December/{01..31}/log.daily}
                 echo "------------------------------------------------"
 
                 if [[ $? -eq 0 ]]; then
-                    echo "Done. Your backup directory is $current_year (Try using 'tree $current_year' command for better view)"
+                    echo "[+] Done. Your backup directory is $current_year (Try using 'tree $current_year' command for better view)"
                 else
-                    echo "There was an issue creating the files"
+                    echo "[-] There was an issue creating the files"
                     exit 1
                 fi
 
             else
-                echo "There was an issue creating the directories"
+                echo "[-] There was an issue creating the directories"
                 exit 1
 
             fi
 
         else
-            echo "There was an issue running the command"
+            echo "[-] There was an issue running the command"
             exit 1
 
         fi
@@ -887,28 +887,28 @@ elif [[ "$option" == "5" || "$check_case" == "process control"  ]]; then
                 if (( process_id >= pid_min && process_id <= pid_max )); then
                     local check=$(ps -p "$process_id" -o pid )
                     if [[ -n "$check" ]]; then
-                        echo "Killing process $process_id"
+                        echo "[+] Killing process $process_id"
                         echo "----------------------------------------------------"
 
                         # Command to terminate the process
                         kill -9 "$process_id"
 
                         if [[ $? -eq 0 ]]; then
-                            echo "Process ID $process_id killed successfully"
+                            echo "[+] Process ID $process_id killed successfully"
                         else
-                            echo "There was a problem in killing process id: $process_id"
+                            echo "[-] There was a problem in killing process id: $process_id"
                             return 1
                         fi
 
                     else
-                        echo "Process $process_id not found"
+                        echo "[-] Process $process_id not found"
                     fi
                     break
                 else
-                    echo "Invalid process ID. Please enter a valid process ID between $pid_min and $pid_max."
+                    echo "[-] Invalid process ID. Please enter a valid process ID between $pid_min and $pid_max."
                 fi
             else
-                echo "Invalid process ID. Please enter a valid process ID consisting of numbers only."
+                echo "[-] Invalid process ID. Please enter a valid process ID consisting of numbers only."
             fi
         done
 
@@ -925,7 +925,7 @@ elif [[ "$option" == "5" || "$check_case" == "process control"  ]]; then
 
             # Validating input
             if [ -z "${PROCESSES[@]}" ]; then
-                echo "Error: Process list cannot be empty"
+                echo "[-] Process list cannot be empty"
             else
                 invalid_processes=()
                 for proc in "${PROCESSES[@]}"; do
@@ -935,7 +935,7 @@ elif [[ "$option" == "5" || "$check_case" == "process control"  ]]; then
                 done
 
                 if [ ${#invalid_processes[@]} -ne 0 ]; then
-                    echo "Error: Invalid process(es): ${invalid_processes[*]}"
+                    echo "[-] Invalid process(es): ${invalid_processes[*]}"
                 else
                     break
                 fi
@@ -953,7 +953,7 @@ elif [[ "$option" == "5" || "$check_case" == "process control"  ]]; then
             elif [[ -z "$CPU_THRESHOLD" ]]; then
                 echo "Looks like we have a classic 'silent treatment' scenario here. Let's break the silence - could you please provide the necessary input?"
             else
-                echo "Invalid input. Please enter a number between 1 and 100"
+                echo "[-] Invalid input. Please enter a number between 1 and 100"
             fi
         done
 
@@ -967,14 +967,14 @@ elif [[ "$option" == "5" || "$check_case" == "process control"  ]]; then
             elif [[ -z "$MEM_THRESHOLD" ]]; then
                 echo "It appears we have a communication breakdown - I need you to speak up (or type up), please!"
             else
-                echo "Invalid input. Please enter a number between 1 and 100"
+                echo "[-] Invalid input. Please enter a number between 1 and 100"
             fi
         done
 
-        echo "Monitoring processes. Press Ctrl+C to exit"
+        echo "[+] Monitoring processes. Press Ctrl+C to exit"
         while true; do
             # Display waiting message
-            echo -ne "Waiting... $(date +"%r")\r"
+            echo -ne "[+] Waiting... $(date +"%r")\r"
 
             for proc in "${PROCESSES[@]}"; do
                 # Get process information using ps and filter by name
@@ -985,7 +985,7 @@ elif [[ "$option" == "5" || "$check_case" == "process control"  ]]; then
                 mem_usage=$(echo $proc_info | cut -d " " -f 2)
 
                 if (( $(echo "$cpu_usage > $CPU_THRESHOLD" | bc -l) )) || (( $(echo "$mem_usage > $MEM_THRESHOLD" | bc -l) )); then
-                    echo "ALERT: Process $proc has exceeded the CPU or memory usage threshold!"
+                    echo "[-] Process $proc has exceeded the CPU or memory usage threshold!"
 
                 fi
             done
@@ -1037,7 +1037,7 @@ elif [[ "$option" == "5" || "$check_case" == "process control"  ]]; then
                     exit 0
 
                 else
-                    echo "Your input is not recognized. Please try again with a valid input"
+                    echo "[-] Your input is not recognized. Please try again with a valid input"
 
                 fi
 
@@ -1069,9 +1069,9 @@ elif [[ "$option" == "6" || "$check_case" == "update system"  ]]; then
     echo -e "\nUpdating system..."; sudo apt update -y && sudo apt upgrade -y && sudo apt clean -y
 
     if [[ $? -eq 0 ]]; then
-        echo "Update completed successfully"
+        echo "[+] Update completed successfully"
     else
-        echo "There was an error updating the system"
+        echo "[-] There was an error updating the system"
     fi
 
 elif [[ "$option" == "7" || "$check_case" == "quit"  ]]; then
